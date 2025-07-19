@@ -23,8 +23,6 @@ import ReadingHistoryPage from './pages/dashboard/reader/ReadingHistoryPage';
 import AdminDashboardPage from './pages/dashboard/admin/AdminDashboardPage';
 import UserManagementPage from './pages/dashboard/admin/UserManagementPage';
 import ContentModerationPage from './pages/dashboard/admin/ContentModerationPage';
-import AnalyticsPage from './pages/dashboard/admin/AnalyticsPage';
-import SystemSettingsPage from './pages/dashboard/admin/SystemSettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Route guards
@@ -106,10 +104,8 @@ function App() {
         </ProtectedRoute>
       }>
         <Route index element={<AdminDashboardPage />} />
-        <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="users" element={<UserManagementPage />} />
         <Route path="moderation" element={<ContentModerationPage />} />
-        <Route path="settings" element={<SystemSettingsPage />} />
       </Route>
       
       {/* 404 */}
