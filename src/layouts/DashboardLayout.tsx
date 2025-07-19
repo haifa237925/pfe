@@ -43,8 +43,10 @@ const DashboardLayout: React.FC = () => {
       case 'admin':
         return [
           { to: '/admin', label: 'Dashboard', icon: <BarChart2 className="h-5 w-5" /> },
+          { to: '/admin/analytics', label: 'Analytics', icon: <BarChart2 className="h-5 w-5" /> },
           { to: '/admin/users', label: 'User Management', icon: <Users className="h-5 w-5" /> },
           { to: '/admin/moderation', label: 'Content Moderation', icon: <Shield className="h-5 w-5" /> },
+          { to: '/admin/settings', label: 'System Settings', icon: <Settings className="h-5 w-5" /> },
         ];
       default: // reader
         return [
