@@ -19,6 +19,7 @@ import WriterDashboardPage from './pages/dashboard/writer/WriterDashboardPage';
 import BookUploadPage from './pages/dashboard/writer/BookUploadPage';
 import SalesStatsPage from './pages/dashboard/writer/SalesStatsPage';
 import ReaderDashboardPage from './pages/dashboard/reader/ReaderDashboardPage';
+import WishlistPage from './pages/dashboard/reader/WishlistPage';
 import ReadingHistoryPage from './pages/dashboard/reader/ReadingHistoryPage';
 import AdminDashboardPage from './pages/dashboard/admin/AdminDashboardPage';
 import UserManagementPage from './pages/dashboard/admin/UserManagementPage';
@@ -94,6 +95,7 @@ function App() {
         </ProtectedRoute>
       }>
         <Route index element={<ReaderDashboardPage />} />
+        <Route path="wishlist" element={<WishlistPage />} />
         <Route path="history" element={<ReadingHistoryPage />} />
       </Route>
       

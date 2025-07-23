@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { BookOpen, Headphones, CreditCard, ShoppingCart, Star, Clock, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { BookType } from '../types/Book';
+import { WishlistButton } from '../components/WishlistButton';
 
 const DUMMY_BOOKS: BookType[] = [
   {
@@ -130,21 +131,27 @@ const BookDetailPage: React.FC = () => {
               </div>
               
               {user ? (
-                <button
-                  onClick={handlePurchase}
-                  disabled={loading}
-                  className="w-full bg-primary-600 text-white py-3 px-4 rounded-md font-medium flex items-center justify-center hover:bg-primary-700 transition-colors"
-                >
-                  {loading ? (
-                    <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                  ) : (
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                  )}
-                  {loading ? 'Processing...' : 'Purchase Now'}
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={handlePurchase}
+                    disabled={loading}
+                    className="w-full bg-primary-600 text-white py-3 px-4 rounded-md font-medium flex items-center justify-center hover:bg-primary-700 transition-colors"
+                  >
+                    {loading ? (
+                      <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                      </svg>
+                    ) : (
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                    )}
+                    {loading ? 'Processing...' : 'Purchase Now'}
+                  </button>
+                  
+                  <div className="flex justify-center">
+                    <WishlistButton bookId={book.id} showText className="px-4 py-2 border border-neutral-300 rounded-md hover:bg-neutral-50" />
+                  </div>
+                </div>
               ) : (
                 <Link
                   to="/login"

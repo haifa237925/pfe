@@ -12,6 +12,7 @@ import {
   Settings, 
   Users, 
   Shield, 
+  Heart,
   ChevronDown,
   Menu,
   X
@@ -49,6 +50,7 @@ const DashboardLayout: React.FC = () => {
       default: // reader
         return [
           { to: '/dashboard', label: 'Dashboard', icon: <BarChart2 className="h-5 w-5" /> },
+          { to: '/dashboard/wishlist', label: 'My Wishlist', icon: <Heart className="h-5 w-5" /> },
           { to: '/dashboard/history', label: 'Reading History', icon: <History className="h-5 w-5" /> },
           { to: '/books', label: 'Book Catalog', icon: <Book className="h-5 w-5" /> },
         ];

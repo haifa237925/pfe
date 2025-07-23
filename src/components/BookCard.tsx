@@ -1,6 +1,7 @@
 import React from 'react';
 import { BookOpen, Headphones } from 'lucide-react';
 import { BookType } from '../types/Book';
+import { WishlistButton } from './WishlistButton';
 
 interface BookCardProps {
   book: BookType;
@@ -16,6 +17,9 @@ export const BookCard: React.FC<BookCardProps> = ({ book }) => {
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute top-2 right-2 flex gap-1">
+          <div className="bg-white/90 backdrop-blur-sm p-1 rounded-md">
+            <WishlistButton bookId={book.id} />
+          </div>
           {book.type === 'ebook' || book.type === 'both' ? (
             <div className="bg-primary-500 text-white p-1 rounded-md">
               <BookOpen className="h-4 w-4" />

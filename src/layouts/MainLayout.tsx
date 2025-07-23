@@ -160,6 +160,22 @@ const MainLayout: React.FC = () => {
                        user.role === 'admin' ? 'Admin Panel' : 'My Dashboard'}
                     </Link>
                     {user.role === 'reader' && (
+                      <>
+                        <Link 
+                          to="/dashboard/wishlist" 
+                          className="text-neutral-700"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          My Wishlist
+                        </Link>
+                      <>
+                        <Link 
+                          to="/dashboard/wishlist" 
+                          className="block px-4 py-2 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                        >
+                          My Wishlist
+                        </Link>
+                      </>
                       <Link 
                         to="/books" 
                         className="text-neutral-700"
@@ -167,6 +183,7 @@ const MainLayout: React.FC = () => {
                       >
                         Browse Books
                       </Link>
+                      </>
                     )}
                     <button 
                       onClick={() => {
