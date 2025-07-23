@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 // Types
 export interface User {
@@ -26,40 +28,86 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Check for existing token on load
+  // Check for existing session on load
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode<{ user: User }>(token);
-        setUser(decoded.user);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      } catch (err) {
-        localStorage.removeItem('token');
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadUserProfile(session.user);
+      } else {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          await loadUserProfile(session.user);
+        } else {
+          setUser(null);
+          setIsLoading(false);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
+  
+  // Load user profile from database
+  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, create it
+        const newProfile = {
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
+          role: 'reader' as const
+        };
+
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert(newProfile);
+
+        if (!insertError) {
+          setUser(newProfile);
+        }
+      } else if (profile) {
+        setUser(profile);
+      }
+    } catch (err) {
+      console.error('Error loading user profile:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // Login function
   const login = async (email: string, password: string) => {
     setError(null);
+    setIsLoading(true);
+    
     try {
-      setIsLoading(true);
-      
-      // Mock login for demo purposes
-      const mockUser: User = {
-        id: Date.now().toString(),
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        name: email.split('@')[0],
-        role: 'reader'
-      };
-      
-      const mockToken = btoa(JSON.stringify({ user: mockUser }));
-      localStorage.setItem('token', mockToken);
-      setUser(mockUser);
+        password,
+      });
+
+      if (error) {
+        setError(error.message);
+        throw error;
+      }
     } catch (err: any) {
-      setError('Login failed. Please try again.');
+      if (!error) {
+        setError('Login failed. Please try again.');
+      }
       throw err;
     } finally {
       setIsLoading(false);
@@ -69,22 +117,44 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Register function
   const register = async (name: string, email: string, password: string, role: 'reader' | 'writer') => {
     setError(null);
+    setIsLoading(true);
+    
     try {
-      setIsLoading(true);
-      
-      // Mock registration for demo purposes
-      const mockUser: User = {
-        id: Date.now().toString(),
+      const { data, error } = await supabase.auth.signUp({
         email,
-        name,
-        role
-      };
-      
-      const mockToken = btoa(JSON.stringify({ user: mockUser }));
-      localStorage.setItem('token', mockToken);
-      setUser(mockUser);
+        password,
+        options: {
+          data: {
+            name,
+            role
+          }
+        }
+      });
+
+      if (error) {
+        setError(error.message);
+        throw error;
+      }
+
+      if (data.user) {
+        // Create profile in database
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            email: data.user.email!,
+            name,
+            role
+          });
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+        }
+      }
     } catch (err: any) {
-      setError('Registration failed. Please try again.');
+      if (!error) {
+        setError('Registration failed. Please try again.');
+      }
       throw err;
     } finally {
       setIsLoading(false);
@@ -92,8 +162,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   
   // Logout function
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
   };
   
