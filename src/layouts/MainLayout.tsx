@@ -82,6 +82,14 @@ const MainLayout: React.FC = () => {
                       <button 
                         onClick={logout}
                         className="block w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-4">
                   <Link 
                     to="/login" 
                     className="text-neutral-700 hover:text-primary-600 font-medium"
@@ -89,7 +97,7 @@ const MainLayout: React.FC = () => {
                     Login
                   </Link>
                   <Link 
-                        </>
+                    to="/register"
                     className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors"
                   >
                     Sign Up
@@ -160,21 +168,13 @@ const MainLayout: React.FC = () => {
                         >
                           My Wishlist
                         </Link>
-                      <>
                         <Link 
-                          to="/dashboard/wishlist" 
-                          className="block px-4 py-2 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                          to="/books" 
+                          className="text-neutral-700"
+                          onClick={() => setIsMenuOpen(false)}
                         >
-                          My Wishlist
+                          Browse Books
                         </Link>
-                      </>
-                      <Link 
-                        to="/books" 
-                        className="text-neutral-700"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Browse Books
-                      </Link>
                       </>
                     )}
                     <button 
