@@ -141,21 +141,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         throw error;
       }
 
-      if (data.user) {
-        // Create profile in database
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email!,
-            name,
-            role
-          });
-
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-        }
-      }
+      // Profile creation is handled by loadUserProfile via onAuthStateChange
     } catch (err: any) {
       if (!error) {
         setError('Registration failed. Please try again.');
