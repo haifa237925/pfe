@@ -40,7 +40,6 @@ const RegisterPage: React.FC = () => {
       console.log('Registration completed successfully');
       // Navigation will be handled by the auth state change
     } catch (err) {
-      console.error('Registration failed:', err);
       // Error is already handled in the auth context
     } finally {
       setIsLoading(false);
