@@ -43,6 +43,12 @@ const RegisterPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Check if the error is about user already existing
+  const isUserAlreadyExistsError = error && (
+    error.includes('User already registered') || 
+    error.includes('user_already_exists')
+  );
   
   return (
     <div className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 w-full">
@@ -52,11 +58,29 @@ const RegisterPage: React.FC = () => {
       </div>
       
       <form onSubmit={handleSubmit}>
-        {(formError || error) && (
+        {(formError || (error && !isUserAlreadyExistsError)) && (
           <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
               <p className="text-red-700">{formError || error}</p>
+            </div>
+          </div>
+        )}
+        
+        {isUserAlreadyExistsError && (
+          <div className="mb-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-blue-500 mr-2" />
+              <div className="text-blue-700">
+                <p className="font-medium">This email is already registered!</p>
+                <p className="text-sm mt-1">
+                  If this is your email, please{' '}
+                  <Link to="/login" className="underline font-medium hover:text-blue-800">
+                    sign in instead
+                  </Link>
+                  .
+                </p>
+              </div>
             </div>
           </div>
         )}
