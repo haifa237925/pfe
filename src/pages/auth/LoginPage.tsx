@@ -22,9 +22,12 @@ const LoginPage: React.FC = () => {
     try {
       setIsLoading(true);
       setFormError('');
+      console.log('Starting login process...');
       await login(email, password);
+      console.log('Login completed successfully');
       // Navigation will be handled by the auth state change
     } catch (err) {
+      console.error('Login failed:', err);
       // Error is already handled in the auth context
     } finally {
       setIsLoading(false);

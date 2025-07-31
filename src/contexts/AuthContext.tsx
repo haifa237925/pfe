@@ -63,6 +63,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Load user profile from database
   const loadUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
+      console.log('Loading profile for user:', supabaseUser.id);
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
@@ -71,6 +72,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (error && error.code === 'PGRST116') {
         // Profile doesn't exist, create it
+        console.log('Profile not found, creating new profile');
         const userRole = (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader';
         
         const newProfile = {
@@ -80,25 +82,49 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           role: userRole
         };
 
+        console.log('Creating profile with data:', newProfile);
         const { error: insertError } = await supabase
           .from('profiles')
           .insert(newProfile);
 
         if (insertError) {
           console.error('Error creating profile:', insertError);
-          setError('Failed to create user profile');
+          // Don't set error, just use the basic user data
+          const basicProfile = {
+            id: supabaseUser.id,
+            email: supabaseUser.email!,
+            name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
+            role: userRole
+          };
+          setUser(basicProfile);
         } else {
+          console.log('Profile created successfully');
           setUser(newProfile);
         }
       } else if (profile) {
+        console.log('Profile found:', profile);
         setUser(profile);
       } else if (error) {
         console.error('Error loading profile:', error);
-        setError('Failed to load user profile');
+        // Fallback to basic user data
+        const basicProfile = {
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
+          role: (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader'
+        };
+        setUser(basicProfile);
       }
     } catch (err) {
       console.error('Error loading user profile:', err);
-      setError('An unexpected error occurred');
+      // Fallback to basic user data
+      const basicProfile = {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
+        role: (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader'
+      };
+      setUser(basicProfile);
     } finally {
       setIsLoading(false);
     }
@@ -107,34 +133,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Login function
   const login = async (email: string, password: string) => {
     setError(null);
-    setIsLoading(true);
     
     try {
+      console.log('Attempting login for:', email);
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
+        console.error('Login error:', error);
         setError(error.message);
         throw error;
       }
+      console.log('Login successful');
     } catch (err: any) {
       if (!error) {
         setError('Login failed. Please try again.');
       }
       throw err;
-    } finally {
-      setIsLoading(false);
     }
   };
   
   // Register function
   const register = async (name: string, email: string, password: string, role: 'reader' | 'writer') => {
     setError(null);
-    setIsLoading(true);
     
     try {
+      console.log('Attempting registration for:', email, 'as', role);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -147,18 +173,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       if (error) {
+        console.error('Registration error:', error);
         setError(error.message);
         throw error;
       }
 
+      console.log('Registration successful:', data);
       // Profile creation is handled by loadUserProfile via onAuthStateChange
     } catch (err: any) {
       if (!error) {
         setError('Registration failed. Please try again.');
       }
       throw err;
-    } finally {
-      setIsLoading(false);
     }
   };
   
