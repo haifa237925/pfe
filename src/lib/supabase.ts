@@ -4,10 +4,25 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+  console.warn('Supabase environment variables not configured. Using demo mode.')
+  // Create a mock client for demo purposes
+  export const supabase = {
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signInWithPassword: () => Promise.resolve({ error: { message: 'Demo mode - authentication disabled' } }),
+      signUp: () => Promise.resolve({ error: { message: 'Demo mode - registration disabled' } }),
+      signOut: () => Promise.resolve({ error: null })
+    },
+    from: () => ({
+      select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { code: 'DEMO_MODE' } }) }) }),
+      insert: () => Promise.resolve({ error: { message: 'Demo mode - database operations disabled' } })
+    })
+  } as any
+} else {
+  export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Types pour TypeScript
 export type Database = {

@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-3 text-neutral-900">Digital Books</h3>
               <p className="text-neutral-600">
-                Access a wide variety of ebooks in different formats, with a secure and comfortable reading experience.
+                Accédez à une grande variété de livres numériques dans différents formats, avec une expérience de lecture sécurisée et confortable.
               </p>
             </div>
             
@@ -57,7 +57,7 @@ const HomePage: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-3 text-neutral-900">Audio Books</h3>
               <p className="text-neutral-600">
-                Listen to your favorite books with our advanced audio player featuring playback controls and progress tracking.
+                Écoutez vos livres préférés avec notre lecteur audio avancé doté de contrôles de lecture et de suivi de progression.
               </p>
             </div>
             
@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-3 text-neutral-900">For Writers</h3>
               <p className="text-neutral-600">
-                Upload and sell your books with detailed analytics on sales and reader engagement.
+                Téléchargez et vendez vos livres avec des analyses détaillées sur les ventes et l'engagement des lecteurs.
               </p>
             </div>
             
@@ -77,7 +77,7 @@ const HomePage: React.FC = () => {
               </div>
               <h3 className="text-xl font-semibold mb-3 text-neutral-900">Secure Platform</h3>
               <p className="text-neutral-600">
-                Advanced security features to protect content from piracy and ensure safe transactions.
+                Fonctionnalités de sécurité avancées pour protéger le contenu du piratage et assurer des transactions sécurisées.
               </p>
             </div>
           </div>

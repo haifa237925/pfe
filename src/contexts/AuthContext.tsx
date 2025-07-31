@@ -31,7 +31,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Check for existing session on load
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error);
+        setIsLoading(false);
+        return;
+      }
       if (session?.user) {
         loadUserProfile(session.user);
       } else {
