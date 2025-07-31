@@ -36,7 +36,7 @@ const RegisterPage: React.FC = () => {
       setIsLoading(true);
       setFormError('');
       await register(name, email, password, role);
-      navigate('/');
+      // Navigation will be handled by the auth state change
     } catch (err) {
       // Error is already handled in the auth context
     } finally {

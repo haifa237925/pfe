@@ -47,6 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         if (session?.user) {
           await loadUserProfile(session.user);
         } else {
@@ -70,28 +71,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (error && error.code === 'PGRST116') {
         // Profile doesn't exist, create it
-        // Get role from user metadata or default to reader
-        const userRole = supabaseUser.user_metadata?.role || 'reader';
+        const userRole = (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader';
         
         const newProfile = {
           id: supabaseUser.id,
           email: supabaseUser.email!,
           name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-          role: userRole as 'reader' | 'writer'
+          role: userRole
         };
 
         const { error: insertError } = await supabase
           .from('profiles')
           .insert(newProfile);
 
-        if (!insertError) {
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+          setError('Failed to create user profile');
+        } else {
           setUser(newProfile);
         }
       } else if (profile) {
         setUser(profile);
+      } else if (error) {
+        console.error('Error loading profile:', error);
+        setError('Failed to load user profile');
       }
     } catch (err) {
       console.error('Error loading user profile:', err);
+      setError('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }

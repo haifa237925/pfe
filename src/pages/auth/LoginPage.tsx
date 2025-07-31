@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
       setIsLoading(true);
       setFormError('');
       await login(email, password);
-      navigate('/');
+      // Navigation will be handled by the auth state change
     } catch (err) {
       // Error is already handled in the auth context
     } finally {

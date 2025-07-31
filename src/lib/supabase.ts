@@ -6,18 +6,22 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 let supabase: any
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables not configured. Using demo mode.')
+  console.warn('Supabase environment variables not configured. Please check your .env file.')
   supabase = {
     auth: {
       getSession: () => Promise.resolve({ data: { session: null }, error: null }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-      signInWithPassword: () => Promise.resolve({ error: { message: 'Demo mode - authentication disabled' } }),
-      signUp: () => Promise.resolve({ error: { message: 'Demo mode - registration disabled' } }),
+      signInWithPassword: () => Promise.resolve({ error: { message: 'Supabase not configured. Please add your Supabase credentials to .env file.' } }),
+      signUp: () => Promise.resolve({ error: { message: 'Supabase not configured. Please add your Supabase credentials to .env file.' } }),
       signOut: () => Promise.resolve({ error: null })
     },
     from: () => ({
-      select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: { code: 'DEMO_MODE' } }) }) }),
-      insert: () => Promise.resolve({ error: { message: 'Demo mode - database operations disabled' } })
+      select: () => ({ 
+        eq: () => ({ 
+          single: () => Promise.resolve({ data: null, error: { code: 'SUPABASE_NOT_CONFIGURED', message: 'Supabase not configured' } }) 
+        }) 
+      }),
+      insert: () => Promise.resolve({ error: { message: 'Supabase not configured' } })
     })
   } as any
 } else {
