@@ -70,11 +70,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (error && error.code === 'PGRST116') {
         // Profile doesn't exist, create it
+        // Get role from user metadata or default to reader
+        const userRole = supabaseUser.user_metadata?.role || 'reader';
+        
         const newProfile = {
           id: supabaseUser.id,
           email: supabaseUser.email!,
           name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-          role: 'reader' as const
+          role: userRole as 'reader' | 'writer'
         };
 
         const { error: insertError } = await supabase
