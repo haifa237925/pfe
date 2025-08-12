@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState('');
-  
+  const {login} = useAuth()
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -23,7 +22,11 @@ const LoginPage: React.FC = () => {
       setIsLoading(true);
       setFormError('');
       console.log('Starting login process...');
-      await login(email, password);
+      const result = await login(email , password);
+      if(result.success === true){
+        navigate('/dashboard')
+      }
+      
       console.log('Login completed successfully');
       // Navigation will be handled by the auth state change
     } catch (err) {
@@ -42,11 +45,11 @@ const LoginPage: React.FC = () => {
       </div>
       
       <form onSubmit={handleSubmit}>
-        {(formError || error) && (
+        {(formError) && (
           <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-              <p className="text-red-700">{formError || error}</p>
+              <p className="text-red-700">{formError}</p>
             </div>
           </div>
         )}

@@ -1,21 +1,26 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import axios from "axios";
 
 // Types
 export interface User {
   id: string;
   email: string;
-  name: string;
-  role: 'reader' | 'writer' | 'admin';
+  username: string; // Changed from 'name' to match your backend response
+  role: 'reader' | 'writer' | 'admin' | 'user';
+}
+
+interface LoginResult {
+  success: boolean;
+  message: string;
+  user?: User;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: 'reader' | 'writer') => Promise<void>;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<LoginResult>;
+  register: (username: string, email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
   error: string | null;
 }
 
@@ -27,171 +32,137 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const backendurl = import.meta.env.VITE_BACK_END_URL;
+
+  // Configure axios to include credentials (cookies) in requests
+  axios.defaults.withCredentials = true;
+
   // Check for existing session on load
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('Error getting session:', error);
-        setIsLoading(false);
-        return;
-      }
-      if (session?.user) {
-        loadUserProfile(session.user);
-      } else {
-        setIsLoading(false);
-      }
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        if (session?.user) {
-          await loadUserProfile(session.user);
-        } else {
-          setUser(null);
-          setIsLoading(false);
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-  
-  // Load user profile from database
-  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
-    try {
-      console.log('Loading profile for user:', supabaseUser.id);
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', supabaseUser.id)
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, create it
-        console.log('Profile not found, creating new profile');
-        const userRole = (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader';
+    const checkUserSession = async () => {
+      try {
+        setIsLoading(true);
+        const result = await axios.get(`${backendurl}/api/auth/check-session` , {withCredentials : true});
         
-        const newProfile = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-          role: userRole
-        };
-
-        console.log('Creating profile with data:', newProfile);
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert(newProfile);
-
-        if (insertError) {
-          console.error('Error creating profile:', insertError);
-          // Don't set error, just use the basic user data
-          const basicProfile = {
-            id: supabaseUser.id,
-            email: supabaseUser.email!,
-            name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-            role: userRole
-          };
-          setUser(basicProfile);
-        } else {
-          console.log('Profile created successfully');
-          setUser(newProfile);
+        if (result.status === 200 && result.data) {
+          setUser({
+            id: result.data.id,
+            email: result.data.email,
+            username: result.data.username,
+            role: result.data.role || 'user'
+          });
         }
-      } else if (profile) {
-        console.log('Profile found:', profile);
-        setUser(profile);
-      } else if (error) {
-        console.error('Error loading profile:', error);
-        // Fallback to basic user data
-        const basicProfile = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-          role: (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader'
-        };
-        setUser(basicProfile);
+      } catch (error: any) {
+        // If check-session fails (401, 500, etc.), user is not authenticated
+        console.log('Session check failed:', error.response?.data?.message || error.message);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Error loading user profile:', err);
-      // Fallback to basic user data
-      const basicProfile = {
-        id: supabaseUser.id,
-        email: supabaseUser.email!,
-        name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-        role: (supabaseUser.user_metadata?.role as 'reader' | 'writer') || 'reader'
+    };
+
+    checkUserSession();
+  }, [backendurl]);
+
+  // Login function
+  const login = async (email: string, password: string): Promise<LoginResult> => {
+    setError(null);
+    setIsLoading(true);
+    
+    try {
+      console.log('Attempting login for:', email);
+      
+      const response = await axios.post(`${backendurl}/api/auth/login`, {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        // Backend returns user data on successful login
+        const userData = response.data.user;
+        const user = {
+          id: userData.id,
+          email: userData.email,
+          username: userData.username,
+          role: userData.role || 'user'
+        };
+        
+        setUser(user);
+        console.log('Login successful');
+        
+        return {
+          success: true,
+          message: response.data.message || 'Login successful',
+          user: user
+        };
+      }
+      
+      // This shouldn't happen if status is 200, but just in case
+      return {
+        success: false,
+        message: 'Unexpected response from server'
       };
-      setUser(basicProfile);
+      
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Login failed. Please try again.';
+      setError(errorMessage);
+      console.error('Login error:', errorMessage);
+      
+      return {
+        success: false,
+        message: errorMessage
+      };
     } finally {
       setIsLoading(false);
     }
   };
   
-  // Login function
-  const login = async (email: string, password: string) => {
-    setError(null);
-    
-    try {
-      console.log('Attempting login for:', email);
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error('Login error:', error);
-        setError(error.message);
-        throw error;
-      }
-      console.log('Login successful');
-    } catch (err: any) {
-      if (!error) {
-        setError('Login failed. Please try again.');
-      }
-      throw err;
-    }
-  };
-  
   // Register function
-  const register = async (name: string, email: string, password: string, role: 'reader' | 'writer') => {
+  const register = async (username: string, email: string, password: string) => {
     setError(null);
+    setIsLoading(true);
     
     try {
-      console.log('Attempting registration for:', email, 'as', role);
-      const { data, error } = await supabase.auth.signUp({
+      console.log('Attempting registration for:', email);
+      
+      const response = await axios.post(`${backendurl}/api/auth/register`, {
+        username,
         email,
         password,
-        options: {
-          data: {
-            name,
-            role
-          }
-        }
       });
 
-      if (error) {
-        console.error('Registration error:', error);
-        setError(error.message);
-        throw error;
+      if (response.status === 201) {
+        // Backend returns user data on successful registration
+        const userData = response.data.user;
+        setUser({
+          id: userData.id,
+          email: userData.email,
+          username: userData.name, // Backend returns 'name' field for username
+          role: userData.role || 'user'
+        });
+        console.log('Registration successful');
       }
-
-      console.log('Registration successful:', data);
-      // Profile creation is handled by loadUserProfile via onAuthStateChange
     } catch (err: any) {
-      if (!error) {
-        setError('Registration failed. Please try again.');
-      }
-      throw err;
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
+      console.error('Registration error:', errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
   
   // Logout function
   const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      await axios.post(`${backendurl}/api/auth/logout`);
+      setUser(null);
+      console.log('Logout successful');
+    } catch (error: any) {
+      // Even if logout request fails, clear user state
+      console.error('Logout error:', error.response?.data?.message || error.message);
+      setUser(null);
+    }
   };
   
   const value = {

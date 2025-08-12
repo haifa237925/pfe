@@ -58,7 +58,6 @@ const DashboardLayout: React.FC = () => {
   };
 
   const navItems = getNavItems();
-  
   return (
     <div className="min-h-screen bg-neutral-100 flex flex-col md:flex-row">
       {/* Mobile header */}

@@ -32,7 +32,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; role?: string }> = (
   role 
 }) => {
   const { user, isLoading } = useAuth();
-  
+    console.log("rana wselna lel dashboard ama controuna ")
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
