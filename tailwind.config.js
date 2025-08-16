@@ -64,6 +64,10 @@ export default {
       animation: {
         'page-turn': 'pageTurn 0.5s ease-in-out',
         'fade-in': 'fadeIn 0.3s ease-in',
+        'float': 'float 6s ease-in-out infinite',
+        'float-delayed': 'float 8s ease-in-out infinite 2s',
+        'float-slow': 'float 10s ease-in-out infinite 4s',
+        'spin-slow': 'spin 20s linear infinite',
       },
       keyframes: {
         pageTurn: {
@@ -73,6 +77,12 @@ export default {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+          '25%': { transform: 'translateY(-20px) rotate(1deg)' },
+          '50%': { transform: 'translateY(-10px) rotate(-1deg)' },
+          '75%': { transform: 'translateY(-15px) rotate(0.5deg)' },
         },
       },
     },

@@ -9,12 +9,27 @@ const HomePage: React.FC = () => {
   return (
     <div className="bg-white dark:bg-neutral-900 transition-colors">
       {/* Hero section - Minimaliste et élégant */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 to-primary-50/30 dark:from-neutral-900 dark:to-primary-900/20 overflow-hidden transition-colors">
-        {/* Décoration subtile */}
-        <div className="absolute inset-0 opacity-5 dark:opacity-10">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-primary-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-72 h-72 bg-secondary-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-accent-500 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl animate-pulse delay-2000"></div>
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden transition-colors bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+        {/* Fond animé avec formes géométriques */}
+        <div className="absolute inset-0">
+          {/* Grille de points subtile */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(59,130,246,0.15)_1px,transparent_0)] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(59,130,246,0.1)_1px,transparent_0)] bg-[size:24px_24px]"></div>
+          
+          {/* Formes géométriques flottantes */}
+          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-primary-400/20 to-secondary-400/20 rounded-full blur-xl animate-float"></div>
+          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-br from-secondary-400/15 to-accent-400/15 rounded-full blur-2xl animate-float-delayed"></div>
+          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-accent-400/20 to-primary-400/20 rounded-full blur-xl animate-float-slow"></div>
+          
+          {/* Formes géométriques polygonales */}
+          <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-gradient-to-br from-primary-500/10 to-transparent transform rotate-45 animate-spin-slow"></div>
+          <div className="absolute bottom-1/3 right-10 w-16 h-16 bg-gradient-to-br from-secondary-500/15 to-transparent transform rotate-12 animate-pulse"></div>
+          
+          {/* Lignes décoratives */}
+          <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-300/30 to-transparent"></div>
+          <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary-300/20 to-transparent"></div>
+          
+          {/* Overlay pour adoucir */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/50 dark:to-slate-900/50"></div>
         </div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
