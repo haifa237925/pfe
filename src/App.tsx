@@ -6,6 +6,7 @@ import { useAuth } from './contexts/AuthContext';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 import DashboardLayout from './layouts/DashboardLayout';
+import AdminLayout from './layouts/AdminLayout';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -111,12 +112,15 @@ function App() {
       {/* Admin Dashboard */}
       <Route path="/admin" element={
         <ProtectedRoute role="admin">
-          <DashboardLayout />
+          <AdminLayout />
         </ProtectedRoute>
       }>
         <Route index element={<AdminDashboardPage />} />
         <Route path="users" element={<UserManagementPage />} />
         <Route path="moderation" element={<ContentModerationPage />} />
+        <Route path="analytics" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Analytics</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
+        <Route path="system" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Système</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
+        <Route path="settings" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Paramètres</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
       </Route>
       
       {/* 404 */}

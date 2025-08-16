@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, AlertCircle, Eye, EyeOff, BookOpen, Sparkles } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Eye, EyeOff, BookOpen, Sparkles, Crown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -204,12 +204,15 @@ const LoginPage: React.FC = () => {
           </p>
           
           <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              Administrateur ?{' '}
-              <Link to="/admin-setup" className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-semibold transition-colors">
-                Configuration admin
+            <div className="text-center">
+              <Link 
+                to="/admin-setup" 
+                className="inline-flex items-center text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-semibold transition-colors bg-purple-50 dark:bg-purple-900/30 px-3 py-2 rounded-full border border-purple-200 dark:border-purple-800"
+              >
+                <Crown className="h-3 w-3 mr-1" />
+                Accès Administrateur
               </Link>
-            </p>
+            </div>
           </div>
         </div>
 
