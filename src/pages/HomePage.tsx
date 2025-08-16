@@ -9,27 +9,43 @@ const HomePage: React.FC = () => {
   return (
     <div className="bg-white dark:bg-neutral-900 transition-colors">
       {/* Hero section - Minimaliste et élégant */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden transition-colors bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-indigo-900">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden transition-colors bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 dark:from-slate-900 dark:via-indigo-900 dark:to-purple-900">
         {/* Fond animé avec formes géométriques */}
         <div className="absolute inset-0">
-          {/* Grille de points subtile */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(59,130,246,0.15)_1px,transparent_0)] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(59,130,246,0.1)_1px,transparent_0)] bg-[size:24px_24px]"></div>
+          {/* Livres flottants */}
+          <div className="absolute top-20 left-10 w-16 h-20 bg-gradient-to-br from-primary-400/30 to-primary-600/30 rounded-sm shadow-lg transform rotate-12 animate-float-book"></div>
+          <div className="absolute top-32 right-20 w-12 h-16 bg-gradient-to-br from-secondary-400/25 to-secondary-600/25 rounded-sm shadow-md transform -rotate-6 animate-float-book-delayed"></div>
+          <div className="absolute bottom-40 left-1/4 w-14 h-18 bg-gradient-to-br from-accent-400/30 to-accent-600/30 rounded-sm shadow-lg transform rotate-45 animate-float-book-slow"></div>
+          <div className="absolute top-1/3 right-1/3 w-10 h-14 bg-gradient-to-br from-purple-400/25 to-purple-600/25 rounded-sm shadow-md transform -rotate-12 animate-float-book"></div>
+          <div className="absolute bottom-1/4 right-16 w-18 h-24 bg-gradient-to-br from-indigo-400/30 to-indigo-600/30 rounded-sm shadow-lg transform rotate-6 animate-float-book-delayed"></div>
           
-          {/* Formes géométriques flottantes */}
-          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-primary-400/20 to-secondary-400/20 rounded-full blur-xl animate-float"></div>
-          <div className="absolute top-40 right-20 w-48 h-48 bg-gradient-to-br from-secondary-400/15 to-accent-400/15 rounded-full blur-2xl animate-float-delayed"></div>
-          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-accent-400/20 to-primary-400/20 rounded-full blur-xl animate-float-slow"></div>
+          {/* Pages volantes */}
+          <div className="absolute top-1/4 left-1/3 w-8 h-10 bg-white/40 dark:bg-white/20 rounded-sm shadow-sm transform rotate-45 animate-page-float"></div>
+          <div className="absolute top-2/3 right-1/4 w-6 h-8 bg-white/30 dark:bg-white/15 rounded-sm shadow-sm transform -rotate-30 animate-page-float-delayed"></div>
+          <div className="absolute bottom-1/3 left-1/5 w-7 h-9 bg-white/35 dark:bg-white/18 rounded-sm shadow-sm transform rotate-60 animate-page-float-slow"></div>
           
-          {/* Formes géométriques polygonales */}
-          <div className="absolute top-1/4 right-1/4 w-24 h-24 bg-gradient-to-br from-primary-500/10 to-transparent transform rotate-45 animate-spin-slow"></div>
-          <div className="absolute bottom-1/3 right-10 w-16 h-16 bg-gradient-to-br from-secondary-500/15 to-transparent transform rotate-12 animate-pulse"></div>
+          {/* Lettres flottantes */}
+          <div className="absolute top-1/5 right-1/5 text-4xl font-serif text-primary-300/30 dark:text-primary-400/20 animate-letter-float">A</div>
+          <div className="absolute bottom-1/5 left-1/6 text-3xl font-serif text-secondary-300/25 dark:text-secondary-400/15 animate-letter-float-delayed">B</div>
+          <div className="absolute top-2/5 left-2/3 text-5xl font-serif text-accent-300/30 dark:text-accent-400/20 animate-letter-float-slow">C</div>
+          <div className="absolute bottom-2/5 right-1/6 text-2xl font-serif text-purple-300/25 dark:text-purple-400/15 animate-letter-float">α</div>
+          <div className="absolute top-3/5 left-1/8 text-3xl font-serif text-indigo-300/30 dark:text-indigo-400/20 animate-letter-float-delayed">ع</div>
           
-          {/* Lignes décoratives */}
-          <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-300/30 to-transparent"></div>
-          <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary-300/20 to-transparent"></div>
+          {/* Lignes de texte stylisées */}
+          <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-300/40 to-transparent"></div>
+          <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary-300/30 to-transparent"></div>
+          <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent-300/35 to-transparent"></div>
+          
+          {/* Particules de lecture */}
+          <div className="absolute inset-0">
+            <div className="absolute top-1/6 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-reading-particle"></div>
+            <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-secondary-400/35 rounded-full animate-reading-particle-delayed"></div>
+            <div className="absolute bottom-1/4 left-1/3 w-2.5 h-2.5 bg-accent-400/40 rounded-full animate-reading-particle-slow"></div>
+            <div className="absolute top-2/3 right-1/5 w-1 h-1 bg-purple-400/30 rounded-full animate-reading-particle"></div>
+          </div>
           
           {/* Overlay pour adoucir */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/50 dark:to-slate-900/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/40 dark:to-slate-900/40"></div>
         </div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
