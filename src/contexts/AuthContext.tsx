@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const checkUserSession = async () => {
       try {
         setIsLoading(true);
-        const result = await axios.get(`${backendurl}/api/auth/check-session` , {withCredentials : true});
+        const result = await axios.get(`${backendurl}/api/auth/check-session`, { withCredentials: true });
         
         if (result.status === 200 && result.data) {
           setUser({
@@ -53,8 +53,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           });
         }
       } catch (error: any) {
-        // If check-session fails (401, 500, etc.), user is not authenticated
+        // If check-session fails, clear any stored user data
         console.log('Session check failed:', error.response?.data?.message || error.message);
+        
+        // Clear any localStorage data that might be persisting the session
+        localStorage.removeItem('user');
+        localStorage.removeItem('authToken');
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -156,12 +160,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = async () => {
     try {
       await axios.post(`${backendurl}/api/auth/logout`);
-      setUser(null);
-      console.log('Logout successful');
     } catch (error: any) {
-      // Even if logout request fails, clear user state
       console.error('Logout error:', error.response?.data?.message || error.message);
+    } finally {
+      // Always clear user state and any stored data
       setUser(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.clear(); // Clear all localStorage for a clean logout
+      console.log('Logout successful');
     }
   };
   

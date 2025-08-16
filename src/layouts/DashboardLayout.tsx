@@ -40,7 +40,8 @@ const DashboardLayout: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    // Force redirect to home after logout
+    window.location.href = '/';
   };
   
   if (!user) {

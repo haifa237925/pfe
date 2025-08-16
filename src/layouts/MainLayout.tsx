@@ -24,6 +24,8 @@ const MainLayout: React.FC = () => {
       default:
         return '/dashboard';
     }
+    // Force redirect to home after logout
+    window.location.href = '/';
   };
 
   const languages = [
