@@ -131,7 +131,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   
   // Register function
-  const register = async (username: string, email: string, password: string) => {
+  const register = async (username: string, email: string, password: string, role: string = 'reader') => {
     setError(null);
     setIsLoading(true);
     
@@ -142,6 +142,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         username,
         email,
         password,
+        role,
       });
 
       if (response.status === 201) {

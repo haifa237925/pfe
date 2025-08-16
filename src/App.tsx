@@ -11,6 +11,7 @@ import DashboardLayout from './layouts/DashboardLayout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import AdminSetupPage from './pages/auth/AdminSetupPage';
 import BookCatalogPage from './pages/BookCatalogPage';
 import BookDetailPage from './pages/BookDetailPage';
 import ReaderPage from './pages/ReaderPage';
@@ -69,6 +70,7 @@ function App() {
       <Route path="/" element={<AuthLayout />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="admin-setup" element={<AdminSetupPage />} />
       </Route>
       
       {/* Protected routes */}

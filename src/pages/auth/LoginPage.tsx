@@ -202,6 +202,15 @@ const LoginPage: React.FC = () => {
               Créer un compte
             </Link>
           </p>
+          
+          <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              Administrateur ?{' '}
+              <Link to="/admin-setup" className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-semibold transition-colors">
+                Configuration admin
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Footer décoratif */}
