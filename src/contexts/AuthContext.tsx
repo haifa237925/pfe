@@ -138,7 +138,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           id: userData.id,
           email: userData.email,
           username: userData.name, // Backend returns 'name' field for username
-          role: userData.role || 'user'
+          role: userData.role || 'reader'
         });
         console.log('Registration successful');
       }

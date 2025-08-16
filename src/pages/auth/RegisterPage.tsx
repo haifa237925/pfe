@@ -10,7 +10,6 @@ const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<'reader' | 'writer'>('reader');
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState('');
   
@@ -36,7 +35,7 @@ const RegisterPage: React.FC = () => {
       setIsLoading(true);
       setFormError('');
       console.log('Starting registration process...');
-      await register(name, email, password, role);
+      await register(name, email, password);
       console.log('Registration completed successfully');
     } catch (err) {
       // Error is already handled in the auth context
@@ -210,52 +209,6 @@ const RegisterPage: React.FC = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-          </div>
-        </div>
-        
-        <div className="mb-6">
-          <label className="block text-neutral-700 text-sm font-medium mb-3">
-            Je souhaite m'inscrire en tant que
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                className="sr-only"
-                name="role"
-                value="reader"
-                checked={role === 'reader'}
-                onChange={() => setRole('reader')}
-              />
-              <div className={`
-                border-2 rounded-xl px-4 py-3 text-center transition-all duration-200
-                ${role === 'reader' 
-                  ? 'bg-primary-50 border-primary-500 text-primary-700' 
-                  : 'border-neutral-300 text-neutral-700 hover:bg-neutral-50'}
-              `}>
-                <div className="font-medium">Lecteur</div>
-                <div className="text-xs mt-1 opacity-75">Découvrir et lire</div>
-              </div>
-            </label>
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                className="sr-only"
-                name="role"
-                value="writer"
-                checked={role === 'writer'}
-                onChange={() => setRole('writer')}
-              />
-              <div className={`
-                border-2 rounded-xl px-4 py-3 text-center transition-all duration-200
-                ${role === 'writer' 
-                  ? 'bg-secondary-50 border-secondary-500 text-secondary-700' 
-                  : 'border-neutral-300 text-neutral-700 hover:bg-neutral-50'}
-              `}>
-                <div className="font-medium">Auteur</div>
-                <div className="text-xs mt-1 opacity-75">Publier et vendre</div>
-              </div>
-            </label>
           </div>
         </div>
         
