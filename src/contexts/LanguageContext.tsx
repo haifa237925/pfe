@@ -119,7 +119,13 @@ const translations = {
     'cta.title': 'Start your literary adventure',
     'cta.subtitle': 'Join thousands of readers who have already discovered their new passion for digital reading.',
     'cta.signup': 'Create my free account',
-    'cta.discover': 'Discover books'
+    'cta.discover': 'Discover books',
+    
+    // Auth
+    'auth.login.title': 'Welcome back!',
+    'auth.login.subtitle': 'Sign in to your LectureVerse account',
+    'auth.register.title': 'Join us',
+    'auth.register.subtitle': 'Create your LectureVerse account'
   },
   ar: {
     // Navigation
@@ -175,7 +181,13 @@ const translations = {
     'cta.title': 'ابدأ مغامرتك الأدبية',
     'cta.subtitle': 'انضم إلى آلاف القراء الذين اكتشفوا بالفعل شغفهم الجديد للقراءة الرقمية.',
     'cta.signup': 'إنشاء حسابي المجاني',
-    'cta.discover': 'اكتشف الكتب'
+    'cta.discover': 'اكتشف الكتب',
+    
+    // Auth
+    'auth.login.title': 'أهلاً بعودتك!',
+    'auth.login.subtitle': 'سجل دخولك إلى حساب LectureVerse',
+    'auth.register.title': 'انضم إلينا',
+    'auth.register.subtitle': 'أنشئ حساب LectureVerse الخاص بك'
   }
 };
 

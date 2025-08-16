@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Mail, Lock, User, AlertCircle } from 'lucide-react';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { register, error } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -63,8 +65,12 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="bg-white shadow-xl rounded-2xl px-8 pt-8 pb-8 mb-4 w-full max-w-md mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-neutral-900 mb-2">Rejoignez-nous</h1>
-        <p className="text-neutral-600">Créez votre compte LectureVerse</p>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+          {t('auth.register.title') || 'Rejoignez-nous'}
+        </h1>
+        <p className="text-neutral-600 dark:text-neutral-400">
+          {t('auth.register.subtitle') || 'Créez votre compte LectureVerse'}
+        </p>
       </div>
 
       {/* Social Signup Buttons */}

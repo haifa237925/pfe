@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +51,12 @@ const LoginPage: React.FC = () => {
   return (
     <div className="bg-white shadow-xl rounded-2xl px-8 pt-8 pb-8 mb-4 w-full max-w-md mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-neutral-900 mb-2">Bon retour !</h1>
-        <p className="text-neutral-600">Connectez-vous à votre compte LectureVerse</p>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+          {t('auth.login.title') || 'Bon retour !'}
+        </h1>
+        <p className="text-neutral-600 dark:text-neutral-400">
+          {t('auth.login.subtitle') || 'Connectez-vous à votre compte LectureVerse'}
+        </p>
       </div>
 
       {/* Social Login Buttons */}
