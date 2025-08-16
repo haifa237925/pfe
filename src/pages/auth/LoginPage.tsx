@@ -52,10 +52,10 @@ const LoginPage: React.FC = () => {
     <div className="bg-white shadow-xl rounded-2xl px-8 pt-8 pb-8 mb-4 w-full max-w-md mx-auto">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-          {t('auth.login.title') || 'Bon retour !'}
+          {t('auth.login.title')}
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">
-          {t('auth.login.subtitle') || 'Connectez-vous à votre compte LectureVerse'}
+          {t('auth.login.subtitle')}
         </p>
       </div>
 

@@ -63,7 +63,13 @@ const translations = {
     'cta.title': 'Commencez votre aventure littéraire',
     'cta.subtitle': 'Rejoignez des milliers de lecteurs qui ont déjà découvert leur nouvelle passion pour la lecture numérique.',
     'cta.signup': 'Créer mon compte gratuit',
-    'cta.discover': 'Découvrir les livres'
+    'cta.discover': 'Découvrir les livres',
+    
+    // Auth
+    'auth.login.title': 'Bon retour !',
+    'auth.login.subtitle': 'Connectez-vous à votre compte LectureVerse',
+    'auth.register.title': 'Rejoignez-nous',
+    'auth.register.subtitle': 'Créez votre compte LectureVerse'
   },
   en: {
     // Navigation
