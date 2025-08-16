@@ -31,11 +31,6 @@ const HomePage: React.FC = () => {
           <div className="absolute bottom-2/5 right-1/6 text-2xl font-serif text-purple-300/25 dark:text-purple-400/15 animate-letter-float">α</div>
           <div className="absolute top-3/5 left-1/8 text-3xl font-serif text-indigo-300/30 dark:text-indigo-400/20 animate-letter-float-delayed">ع</div>
           
-          {/* Lignes de texte stylisées */}
-          <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-300/40 to-transparent"></div>
-          <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary-300/30 to-transparent"></div>
-          <div className="absolute top-2/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent-300/35 to-transparent"></div>
-          
           {/* Particules de lecture */}
           <div className="absolute inset-0">
             <div className="absolute top-1/6 left-1/4 w-2 h-2 bg-primary-400/40 rounded-full animate-reading-particle"></div>
