@@ -42,6 +42,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const checkUserSession = async () => {
       try {
         setIsLoading(true);
+        
+        // Force logout on development server start
+        if (import.meta.env.DEV) {
+          localStorage.clear();
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+        
         const result = await axios.get(`${backendurl}/api/auth/check-session`, { withCredentials: true });
         
         if (result.status === 200 && result.data) {
