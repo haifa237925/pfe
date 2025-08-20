@@ -43,32 +43,54 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         setIsLoading(true);
         
-        // Force logout on development server start
-        if (import.meta.env.DEV) {
-          localStorage.clear();
-          setUser(null);
-          setIsLoading(false);
-          return;
+        // Check if there's a stored user in localStorage first (fallback)
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          try {
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
+          } catch (e) {
+            console.error('Failed to parse stored user:', e);
+            localStorage.removeItem('user');
+          }
         }
         
+        // Then verify with backend
         const result = await axios.get(`${backendurl}/api/auth/check-session`, { withCredentials: true });
         
         if (result.status === 200 && result.data) {
-          setUser({
+          const userData = {
             id: result.data.id,
             email: result.data.email,
             username: result.data.username,
             role: result.data.role || 'user'
-          });
+          };
+          setUser(userData);
+          
+          // Store user data as backup
+          localStorage.setItem('user', JSON.stringify(userData));
         }
       } catch (error: any) {
         // If check-session fails, clear any stored user data
         console.log('Session check failed:', error.response?.data?.message || error.message);
         
-        // Clear any localStorage data that might be persisting the session
-        localStorage.removeItem('user');
-        localStorage.removeItem('authToken');
-        setUser(null);
+        // Only clear if the stored user exists and backend confirms no session
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          localStorage.removeItem('user');
+          localStorage.removeItem('authToken');
+          setUser(null);
+        }
+        // For network errors, keep the stored user if available
+        else {
+          const storedUser = localStorage.getItem('user');
+          if (storedUser && !user) {
+            try {
+              setUser(JSON.parse(storedUser));
+            } catch (e) {
+              localStorage.removeItem('user');
+            }
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -101,6 +123,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         
         setUser(user);
+        
+        // Store user data for persistence
+        localStorage.setItem('user', JSON.stringify(user));
+        
         console.log('Login successful');
         
         return {
@@ -148,12 +174,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (response.status === 201) {
         // Backend returns user data on successful registration
         const userData = response.data.user;
-        setUser({
+        const user = {
           id: userData.id,
           email: userData.email,
           username: userData.name, // Backend returns 'name' field for username
           role: userData.role || 'reader'
-        });
+        };
+        
+        setUser(user);
+        
+        // Store user data for persistence
+        localStorage.setItem('user', JSON.stringify(user));
+        
         console.log('Registration successful');
       }
     } catch (err: any) {
@@ -177,7 +209,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(null);
       localStorage.removeItem('user');
       localStorage.removeItem('authToken');
-      localStorage.clear(); // Clear all localStorage for a clean logout
       console.log('Logout successful');
     }
   };

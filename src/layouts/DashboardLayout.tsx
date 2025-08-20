@@ -20,7 +20,8 @@ import {
   X,
   Sun,
   Moon,
-  Globe
+  Globe,
+  UserPlus
 } from 'lucide-react';
 
 const DashboardLayout: React.FC = () => {
@@ -73,29 +74,31 @@ const DashboardLayout: React.FC = () => {
   };
 
   const navItems = getNavItems();
+  
   return (
-    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-800 flex flex-col md:flex-row transition-colors">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex flex-col md:flex-row transition-colors">
       {/* Mobile header */}
-      <div className="md:hidden bg-white dark:bg-neutral-800 p-4 shadow-sm flex items-center justify-between">
+      <div className="md:hidden bg-white dark:bg-neutral-800 px-4 py-3 shadow-sm flex items-center justify-between border-b dark:border-neutral-700">
         <div className="flex items-center">
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-neutral-500 dark:text-neutral-400 mr-4"
+            className="text-neutral-500 dark:text-neutral-400 mr-3 p-1"
           >
             {isSidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
           <Link to="/" className="flex items-center">
-            <BookOpen className="h-7 w-7 text-primary-600" />
-            <span className="ml-2 text-xl font-bold text-neutral-900 dark:text-white">LectureVerse</span>
+            <BookOpen className="h-6 w-6 text-primary-600" />
+            <span className="ml-2 text-lg font-bold text-neutral-900 dark:text-white">LectureVerse</span>
           </Link>
         </div>
-        <div className="flex items-center space-x-2">
+        
+        <div className="flex items-center space-x-1">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
           >
-            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
 
           {/* Language Selector */}
@@ -104,7 +107,7 @@ const DashboardLayout: React.FC = () => {
               onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
               className="p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             >
-              <Globe className="h-5 w-5" />
+              <Globe className="h-4 w-4" />
             </button>
             {isLanguageMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 z-50 border dark:border-neutral-700">
@@ -115,7 +118,7 @@ const DashboardLayout: React.FC = () => {
                       setLanguage(lang.code as any);
                       setIsLanguageMenuOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center ${
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center transition-colors ${
                       language === lang.code ? 'bg-primary-50 dark:bg-primary-900 text-primary-600' : 'text-neutral-700 dark:text-neutral-300'
                     }`}
                   >
@@ -127,40 +130,48 @@ const DashboardLayout: React.FC = () => {
             )}
           </div>
 
+          {/* User Menu */}
           <div className="relative group">
-            <button className="flex items-center space-x-1 text-neutral-700 dark:text-neutral-300">
-            <User className="h-5 w-5" />
-            <ChevronDown className="h-4 w-4" />
-          </button>
-            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block border dark:border-neutral-700">
-              <Link to="/" className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900">Home</Link>
-            <button 
-              onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900"
-            >
-              Logout
+            <button className="flex items-center space-x-1 text-neutral-700 dark:text-neutral-300 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
+              <User className="h-4 w-4" />
+              <ChevronDown className="h-3 w-3" />
             </button>
-          </div>
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block border dark:border-neutral-700">
+              <Link 
+                to="/" 
+                className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+              >
+                Home
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
       
       {/* Sidebar */}
-      <div className={`md:w-64 bg-white shadow-md md:flex md:flex-col transition-all duration-300 ease-in-out ${
+      <div className={`md:w-64 bg-white dark:bg-neutral-800 shadow-sm md:flex md:flex-col transition-all duration-300 ease-in-out border-r dark:border-neutral-700 ${
         isSidebarOpen ? 'fixed inset-0 z-20 overflow-auto' : 'hidden'
-      } md:relative md:block dark:bg-neutral-800`}>
-        <div className="p-5 border-b border-neutral-200 hidden md:block">
-          <div className="flex items-center justify-between mb-4">
-          <Link to="/" className="flex items-center">
-            <BookOpen className="h-7 w-7 text-primary-600" />
-              <span className="ml-2 text-xl font-bold text-neutral-900 dark:text-white">LectureVerse</span>
-          </Link>
+      } md:relative md:block`}>
+        
+        {/* Desktop Header */}
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 hidden md:block">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center">
+              <BookOpen className="h-6 w-6 text-primary-600" />
+              <span className="ml-2 text-lg font-bold text-neutral-900 dark:text-white">LectureVerse</span>
+            </Link>
             
             <div className="flex items-center space-x-1">
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-1.5 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                className="p-1.5 rounded-md text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
                 {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
               </button>
@@ -169,7 +180,7 @@ const DashboardLayout: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
-                  className="p-1.5 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                  className="p-1.5 rounded-md text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
                   <Globe className="h-4 w-4" />
                 </button>
@@ -182,7 +193,7 @@ const DashboardLayout: React.FC = () => {
                           setLanguage(lang.code as any);
                           setIsLanguageMenuOpen(false);
                         }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center ${
+                        className={`w-full text-left px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center transition-colors ${
                           language === lang.code ? 'bg-primary-50 dark:bg-primary-900 text-primary-600' : 'text-neutral-700 dark:text-neutral-300'
                         }`}
                       >
@@ -198,44 +209,58 @@ const DashboardLayout: React.FC = () => {
         </div>
         
         {/* User info */}
-        <div className="p-5 border-b border-neutral-200 dark:border-neutral-700">
+        <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center">
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-              <User className="h-6 w-6 text-primary-600" />
+            <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+              <User className="h-5 w-5 text-primary-600" />
             </div>
             <div className="ml-3">
-              <p className="font-medium text-neutral-900 dark:text-white">{user.username}</p>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">{user.role}</p>
+              <p className="font-medium text-neutral-900 dark:text-white text-sm">{user.username}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{user.role}</p>
             </div>
           </div>
         </div>
         
         {/* Navigation */}
-        <div className="py-5 flex-grow">
-          <nav className="px-4 space-y-1">
+        <div className="py-4 flex-grow">
+          <nav className="px-6 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center px-3 py-3 rounded-md ${
+                className={`flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
                   location.pathname === item.to
-                    ? 'bg-primary-50 text-primary-600'
+                    ? 'bg-primary-50 dark:bg-primary-900 text-primary-600 border-r-2 border-primary-600'
                     : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
-                } transition duration-150`}
+                }`}
                 onClick={() => setIsSidebarOpen(false)}
               >
                 {item.icon}
                 <span className="ml-3">{item.label}</span>
               </Link>
             ))}
+            
+            {/* Publisher Request Button - Only for readers */}
+            {user.role === 'reader' && (
+              <div className="pt-3 mt-3 border-t border-neutral-200 dark:border-neutral-700">
+                <Link
+                  to="/publisher-request"
+                  className="flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 shadow-sm hover:shadow-md"
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  <UserPlus className="h-5 w-5" />
+                  <span className="ml-3">Become Publisher?</span>
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
         
         {/* Logout */}
-        <div className="p-5 border-t border-neutral-200 dark:border-neutral-700">
+        <div className="p-3 border-t border-neutral-200 dark:border-neutral-700">
           <button
             onClick={handleLogout}
-            className="flex items-center w-full px-3 py-3 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-md transition duration-150"
+            className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-md transition-colors"
           >
             <LogOut className="h-5 w-5" />
             <span className="ml-3">Logout</span>
@@ -244,26 +269,34 @@ const DashboardLayout: React.FC = () => {
       </div>
       
       {/* Main content */}
-      <div className="flex-grow md:ml-64">
-        <div className="p-5 hidden md:flex items-center justify-between bg-white dark:bg-neutral-800 shadow-sm">
-          <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">
-            {navItems.find(item => item.to === location.pathname)?.label || 'Dashboard'}
-          </h1>
+      <div className="flex-grow flex flex-col">
+        {/* Desktop header */}
+        <div className="px-6 py-4 hidden md:flex items-center justify-between bg-white dark:bg-neutral-800 shadow-sm border-b dark:border-neutral-700">
+          <div className="flex items-center">
+            <div className="w-6 mr-2"></div> {/* Spacer to align with logo icon */}
+            <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">
+              {navItems.find(item => item.to === location.pathname)?.label || 'Dashboard'}
+            </h1>
+          </div>
           
-          <div className="flex items-center space-x-4">
-            <Link to="/" className="text-neutral-600 dark:text-neutral-300 hover:text-primary-600">
-              <span className="text-sm">Home</span>
+          <div className="flex items-center space-x-3">
+            <Link 
+              to="/" 
+              className="text-sm text-neutral-600 dark:text-neutral-300 hover:text-primary-600 transition-colors px-3 py-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            >
+              Home
             </Link>
             <button 
               onClick={handleLogout}
-              className="text-neutral-600 dark:text-neutral-300 hover:text-primary-600"
+              className="text-neutral-600 dark:text-neutral-300 hover:text-primary-600 transition-colors p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
             </button>
           </div>
         </div>
         
-        <main className="p-6 bg-neutral-50 dark:bg-neutral-900 min-h-screen">
+        {/* Main content area */}
+        <main className="flex-grow p-6 bg-neutral-50 dark:bg-neutral-900 overflow-auto">
           <Outlet />
         </main>
       </div>
@@ -273,7 +306,7 @@ const DashboardLayout: React.FC = () => {
         <div 
           className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsSidebarOpen(false)}
-        ></div>
+        />
       )}
     </div>
   );

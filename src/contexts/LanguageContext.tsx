@@ -6,6 +6,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  isRTL: boolean;
 }
 
 const translations = {
@@ -69,8 +70,39 @@ const translations = {
     'auth.login.title': 'Bon retour !',
     'auth.login.subtitle': 'Connectez-vous à votre compte LectureVerse',
     'auth.register.title': 'Rejoignez-nous',
-    'auth.register.subtitle': 'Créez votre compte LectureVerse'
-  },
+    'auth.register.subtitle': 'Créez votre compte LectureVerse',
+    
+    // Dashboard
+    'dashboard.title': 'Tableau de bord',
+    'dashboard.wishlist': 'Ma Liste de souhaits',
+    'dashboard.history': 'Historique de lecture',
+    'dashboard.catalog': 'Catalogue de livres',
+    'dashboard.become_publisher': 'Devenir Publisher?',
+    
+    // Publisher Request
+    'publisher.title': 'Demande pour devenir Publisher',
+    'publisher.subtitle': 'Rejoignez notre communauté d\'auteurs et publiez vos œuvres',
+    'publisher.personal_info': 'Informations personnelles',
+    'publisher.contact_info': 'Informations de contact',
+    'publisher.professional_info': 'Informations professionnelles',
+    'publisher.motivation': 'Motivation et projets',
+    'publisher.submit': 'Envoyer la demande',
+    'publisher.success': 'Demande envoyée avec succès !',
+    
+    // Common
+    'common.loading': 'Chargement...',
+    'common.error': 'Erreur',
+    'common.success': 'Succès',
+    'common.cancel': 'Annuler',
+    'common.submit': 'Soumettre',
+    'common.save': 'Enregistrer',
+    'common.edit': 'Modifier',
+    'common.delete': 'Supprimer',
+    'common.search': 'Rechercher',
+    'common.filter': 'Filtrer',
+    'common.sort': 'Trier'
+  } as const,
+  
   en: {
     // Navigation
     'nav.home': 'Home',
@@ -131,8 +163,39 @@ const translations = {
     'auth.login.title': 'Welcome back!',
     'auth.login.subtitle': 'Sign in to your LectureVerse account',
     'auth.register.title': 'Join us',
-    'auth.register.subtitle': 'Create your LectureVerse account'
-  },
+    'auth.register.subtitle': 'Create your LectureVerse account',
+    
+    // Dashboard
+    'dashboard.title': 'Dashboard',
+    'dashboard.wishlist': 'My Wishlist',
+    'dashboard.history': 'Reading History',
+    'dashboard.catalog': 'Book Catalog',
+    'dashboard.become_publisher': 'Become Publisher?',
+    
+    // Publisher Request
+    'publisher.title': 'Become a Publisher',
+    'publisher.subtitle': 'Join our community of authors and publish your works',
+    'publisher.personal_info': 'Personal Information',
+    'publisher.contact_info': 'Contact Information',
+    'publisher.professional_info': 'Professional Information',
+    'publisher.motivation': 'Motivation and Projects',
+    'publisher.submit': 'Submit Request',
+    'publisher.success': 'Request submitted successfully!',
+    
+    // Common
+    'common.loading': 'Loading...',
+    'common.error': 'Error',
+    'common.success': 'Success',
+    'common.cancel': 'Cancel',
+    'common.submit': 'Submit',
+    'common.save': 'Save',
+    'common.edit': 'Edit',
+    'common.delete': 'Delete',
+    'common.search': 'Search',
+    'common.filter': 'Filter',
+    'common.sort': 'Sort'
+  } as const,
+  
   ar: {
     // Navigation
     'nav.home': 'الرئيسية',
@@ -193,9 +256,42 @@ const translations = {
     'auth.login.title': 'أهلاً بعودتك!',
     'auth.login.subtitle': 'سجل دخولك إلى حساب LectureVerse',
     'auth.register.title': 'انضم إلينا',
-    'auth.register.subtitle': 'أنشئ حساب LectureVerse الخاص بك'
-  }
+    'auth.register.subtitle': 'أنشئ حساب LectureVerse الخاص بك',
+    
+    // Dashboard
+    'dashboard.title': 'لوحة التحكم',
+    'dashboard.wishlist': 'قائمة الرغبات',
+    'dashboard.history': 'سجل القراءة',
+    'dashboard.catalog': 'كتالوج الكتب',
+    'dashboard.become_publisher': 'أصبح ناشر؟',
+    
+    // Publisher Request
+    'publisher.title': 'طلب أن تصبح ناشر',
+    'publisher.subtitle': 'انضم إلى مجتمع الكتاب واكتب أعمالك',
+    'publisher.personal_info': 'المعلومات الشخصية',
+    'publisher.contact_info': 'معلومات الاتصال',
+    'publisher.professional_info': 'المعلومات المهنية',
+    'publisher.motivation': 'الدافع والمشاريع',
+    'publisher.submit': 'إرسال الطلب',
+    'publisher.success': 'تم إرسال الطلب بنجاح!',
+    
+    // Common
+    'common.loading': 'جاري التحميل...',
+    'common.error': 'خطأ',
+    'common.success': 'نجح',
+    'common.cancel': 'إلغاء',
+    'common.submit': 'إرسال',
+    'common.save': 'حفظ',
+    'common.edit': 'تحرير',
+    'common.delete': 'حذف',
+    'common.search': 'بحث',
+    'common.filter': 'فلتر',
+    'common.sort': 'ترتيب'
+  } as const
 };
+
+// Type helper for translation keys
+type TranslationKey = keyof typeof translations.fr;
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -220,11 +316,23 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    const translation = translations[language]?.[key as TranslationKey];
+    if (!translation) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`Translation missing for key: ${key} in language: ${language}`);
+      }
+      // Fallback: anglais → français → clé originale
+      return translations.en?.[key as TranslationKey] || 
+             translations.fr?.[key as TranslationKey] || 
+             key;
+    }
+    return translation;
   };
 
+  const isRTL = language === 'ar';
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, isRTL }}>
       {children}
     </LanguageContext.Provider>
   );

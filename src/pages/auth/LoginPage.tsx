@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, AlertCircle, Eye, EyeOff, BookOpen, Sparkles, Crown } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Eye, EyeOff, BookOpen, Sparkles } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -26,25 +26,62 @@ const LoginPage: React.FC = () => {
       setIsLoading(true);
       setFormError('');
       console.log('Starting login process...');
-      const result = await login(email, password);
-      if (result.success === true) {
-        navigate('/dashboard');
-      }
       
-      console.log('Login completed successfully');
-    } catch (err) {
+      const result = await login(email, password);
+      
+      if (result.success) {
+        // Redirection basée sur le rôle utilisateur
+        if (result.user?.role === 'admin' || result.user?.isAdmin) {
+          console.log('Admin login detected, redirecting to admin dashboard');
+          navigate('/admin');
+        } else if (result.user?.role === 'moderator') {
+          navigate('/moderator/dashboard');
+        } else if (result.user?.role === 'writer') {
+          console.log('Writer login detected, redirecting to writer dashboard');
+          navigate('/writer');
+        } else {
+          navigate('/dashboard'); // Utilisateur normal (reader)
+        }
+      } else {
+        // Gestion des erreurs spécifiques
+        setFormError(result.message || 'Erreur de connexion. Vérifiez vos identifiants.');
+      }
+    } catch (err: any) {
       console.error('Login failed:', err);
+      
+      // Gestion d'erreurs plus spécifique
+      if (err?.response?.status === 401) {
+        setFormError('Email ou mot de passe incorrect');
+      } else if (err?.response?.status === 429) {
+        setFormError('Trop de tentatives. Veuillez patienter avant de réessayer.');
+      } else if (err?.code === 'NETWORK_ERROR') {
+        setFormError('Problème de connexion réseau. Vérifiez votre connexion internet.');
+      } else {
+        setFormError('Une erreur inattendue s\'est produite. Veuillez réessayer.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BACK_END_URL}/api/auth/google`;
+    try {
+      window.location.href = `${import.meta.env.VITE_BACK_END_URL}/api/auth/google`;
+    } catch (error) {
+      setFormError('Erreur lors de la redirection vers Google');
+    }
   };
 
   const handleFacebookLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BACK_END_URL}/api/auth/facebook`;
+    try {
+      window.location.href = `${import.meta.env.VITE_BACK_END_URL}/api/auth/facebook`;
+    } catch (error) {
+      setFormError('Erreur lors de la redirection vers Facebook');
+    }
+  };
+
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
   };
   
   return (
@@ -83,7 +120,8 @@ const LoginPage: React.FC = () => {
         <div className="space-y-3 mb-6">
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md group"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md group disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -96,7 +134,8 @@ const LoginPage: React.FC = () => {
 
           <button
             onClick={handleFacebookLogin}
-            className="w-full flex items-center justify-center px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md group"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-all duration-200 font-medium shadow-sm hover:shadow-md group disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="#1877F2" viewBox="0 0 24 24">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -139,6 +178,7 @@ const LoginPage: React.FC = () => {
                 placeholder="votre@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
                 required
               />
             </div>
@@ -149,7 +189,11 @@ const LoginPage: React.FC = () => {
               <label className="block text-neutral-700 dark:text-neutral-300 text-sm font-semibold" htmlFor="password">
                 Mot de passe
               </label>
-              <button type="button" className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors">
+              <button 
+                type="button" 
+                onClick={handleForgotPassword}
+                className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors"
+              >
                 Mot de passe oublié ?
               </button>
             </div>
@@ -164,12 +208,14 @@ const LoginPage: React.FC = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -202,18 +248,6 @@ const LoginPage: React.FC = () => {
               Créer un compte
             </Link>
           </p>
-          
-          <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
-            <div className="text-center">
-              <Link 
-                to="/admin-setup" 
-                className="inline-flex items-center text-xs text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-semibold transition-colors bg-purple-50 dark:bg-purple-900/30 px-3 py-2 rounded-full border border-purple-200 dark:border-purple-800"
-              >
-                <Crown className="h-3 w-3 mr-1" />
-                Accès Administrateur
-              </Link>
-            </div>
-          </div>
         </div>
 
         {/* Footer décoratif */}

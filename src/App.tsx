@@ -12,7 +12,6 @@ import AdminLayout from './layouts/AdminLayout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import AdminSetupPage from './pages/auth/AdminSetupPage';
 import BookCatalogPage from './pages/BookCatalogPage';
 import BookDetailPage from './pages/BookDetailPage';
 import ReaderPage from './pages/ReaderPage';
@@ -23,6 +22,7 @@ import SalesStatsPage from './pages/dashboard/writer/SalesStatsPage';
 import ReaderDashboardPage from './pages/dashboard/reader/ReaderDashboardPage';
 import WishlistPage from './pages/dashboard/reader/WishlistPage';
 import ReadingHistoryPage from './pages/dashboard/reader/ReadingHistoryPage';
+import PublisherRequestPage from './pages/dashboard/reader/PublisherRequestPage';
 import AdminDashboardPage from './pages/dashboard/admin/AdminDashboardPage';
 import UserManagementPage from './pages/dashboard/admin/UserManagementPage';
 import ContentModerationPage from './pages/dashboard/admin/ContentModerationPage';
@@ -71,7 +71,7 @@ function App() {
       <Route path="/" element={<AuthLayout />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
-        <Route path="admin-setup" element={<AdminSetupPage />} />
+        
       </Route>
       
       {/* Protected routes */}
@@ -109,19 +109,29 @@ function App() {
         <Route path="history" element={<ReadingHistoryPage />} />
       </Route>
       
-      {/* Admin Dashboard */}
-      <Route path="/admin" element={
-        <ProtectedRoute role="admin">
-          <AdminLayout />
+      {/* Publisher Request - Only for readers */}
+      <Route path="/publisher-request" element={
+        <ProtectedRoute role="reader">
+          <DashboardLayout />
         </ProtectedRoute>
       }>
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="users" element={<UserManagementPage />} />
-        <Route path="moderation" element={<ContentModerationPage />} />
-        <Route path="analytics" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Analytics</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
-        <Route path="system" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Système</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
-        <Route path="settings" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Paramètres</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
+        <Route index element={<PublisherRequestPage />} />
       </Route>
+      
+      {/* Admin Dashboard */}
+      <Route path="/admin" element={
+  <ProtectedRoute role="admin">
+    <AdminLayout />
+  </ProtectedRoute>
+}>
+  <Route index element={<AdminDashboardPage />} />
+  <Route path="dashboard" element={<AdminDashboardPage />} /> {/* Ajout de cette ligne */}
+  <Route path="users" element={<UserManagementPage />} />
+  <Route path="moderation" element={<ContentModerationPage />} />
+  <Route path="analytics" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Analytics</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
+  <Route path="system" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Système</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
+  <Route path="settings" element={<div className="p-6 bg-white rounded-lg shadow-sm"><h2 className="text-xl font-semibold mb-4">Paramètres</h2><p className="text-neutral-600">Fonctionnalité en développement...</p></div>} />
+</Route>
       
       {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />
