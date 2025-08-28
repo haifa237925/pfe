@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
       
       if (result.success) {
         // Redirection basée sur le rôle utilisateur
-        if (result.user?.role === 'admin' || result.user?.isAdmin) {
+        if (result.user?.role === 'admin') {
           console.log('Admin login detected, redirecting to admin dashboard');
           navigate('/admin');
         } else if (result.user?.role === 'moderator') {
