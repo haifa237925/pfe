@@ -122,7 +122,7 @@ const BookCatalogPage: React.FC = () => {
   
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-neutral-900">Book Catalog</h1>
+      <h1 className="text-3xl font-bold mb-6 text-neutral-900">Catalogue</h1>
       
       {/* Search and filters */}
       <div className="mb-8">

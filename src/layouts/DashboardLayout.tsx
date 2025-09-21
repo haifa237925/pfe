@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { 
@@ -21,11 +22,13 @@ import {
   Sun,
   Moon,
   Globe,
-  UserPlus
+  UserPlus,
+  ShoppingCart
 } from 'lucide-react';
 
 const DashboardLayout: React.FC = () => {
   const { user, logout } = useAuth();
+  const { getTotalItems } = useCart();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const location = useLocation();
@@ -59,16 +62,20 @@ const DashboardLayout: React.FC = () => {
         ];
       case 'admin':
         return [
-          { to: '/admin', label: 'Dashboard', icon: <BarChart2 className="h-5 w-5" /> },
-          { to: '/admin/users', label: 'User Management', icon: <Users className="h-5 w-5" /> },
-          { to: '/admin/moderation', label: 'Content Moderation', icon: <Shield className="h-5 w-5" /> },
+          { to: '/admin', label: 'Dashboard', icon: <BarChart2 /> },
+          { to: '/admin/users', label: 'User Management', icon: <Users /> },
+          { to: '/admin/moderation', label: 'Content Moderation', icon: <Shield /> },
+          { to: '/admin/analytics', label: 'Analytics', icon: <BarChart2 /> },
+          { to: '/admin/system', label: 'System', icon: <Settings /> },
+          { to: '/admin/settings', label: 'Settings', icon: <Settings /> },
         ];
       default: // reader
         return [
           { to: '/dashboard', label: 'Dashboard', icon: <BarChart2 className="h-5 w-5" /> },
-          { to: '/dashboard/wishlist', label: 'My Wishlist', icon: <Heart className="h-5 w-5" /> },
-          { to: '/dashboard/history', label: 'Reading History', icon: <History className="h-5 w-5" /> },
-          { to: '/books', label: 'Book Catalog', icon: <Book className="h-5 w-5" /> },
+          { to: '/dashboard/wishlist', label: 'Ma Liste de Souhaits', icon: <Heart className="h-5 w-5" /> },
+          { to: '/dashboard/history', label: 'Historique de Lecture', icon: <History className="h-5 w-5" /> },
+          { to: '/cart', label: 'Mon Panier', icon: <ShoppingCart className="h-5 w-5" />, badge: getTotalItems() },
+          { to: '/books', label: 'Catalogue', icon: <Book className="h-5 w-5" /> },
         ];
     }
   };
@@ -93,6 +100,19 @@ const DashboardLayout: React.FC = () => {
         </div>
         
         <div className="flex items-center space-x-1">
+          {/* Cart Icon for Mobile */}
+          <Link
+            to="/cart"
+            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors relative"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {getTotalItems() > 0 && (
+              <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                {getTotalItems()}
+              </span>
+            )}
+          </Link>
+          
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -141,13 +161,13 @@ const DashboardLayout: React.FC = () => {
                 to="/" 
                 className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
-                Home
+                Accueil
               </Link>
               <button 
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
-                Logout
+                Déconnexion
               </button>
             </div>
           </div>
@@ -168,6 +188,19 @@ const DashboardLayout: React.FC = () => {
             </Link>
             
             <div className="flex items-center space-x-1">
+              {/* Cart Icon for Desktop */}
+              <Link
+                to="/cart"
+                className="p-1.5 rounded-md text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors relative"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </Link>
+              
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
@@ -228,7 +261,7 @@ const DashboardLayout: React.FC = () => {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors relative ${
                   location.pathname === item.to
                     ? 'bg-primary-50 dark:bg-primary-900 text-primary-600 border-r-2 border-primary-600'
                     : 'text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
@@ -237,6 +270,11 @@ const DashboardLayout: React.FC = () => {
               >
                 {item.icon}
                 <span className="ml-3">{item.label}</span>
+                {item.badge && item.badge > 0 && (
+                  <span className="ml-auto bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             ))}
             
@@ -249,7 +287,7 @@ const DashboardLayout: React.FC = () => {
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <UserPlus className="h-5 w-5" />
-                  <span className="ml-3">Become Publisher?</span>
+                  <span className="ml-3">Devenir Éditeur?</span>
                 </Link>
               </div>
             )}
@@ -263,7 +301,7 @@ const DashboardLayout: React.FC = () => {
             className="flex items-center w-full px-3 py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-md transition-colors"
           >
             <LogOut className="h-5 w-5" />
-            <span className="ml-3">Logout</span>
+            <span className="ml-3">Déconnexion</span>
           </button>
         </div>
       </div>
@@ -284,7 +322,7 @@ const DashboardLayout: React.FC = () => {
               to="/" 
               className="text-sm text-neutral-600 dark:text-neutral-300 hover:text-primary-600 transition-colors px-3 py-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700"
             >
-              Home
+              Accueil
             </Link>
             <button 
               onClick={handleLogout}

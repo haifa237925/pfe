@@ -11,7 +11,7 @@ import {
   ChevronRight, 
   Play, 
   Headphones,
-  Download,
+
   Filter,
   Search,
   MoreHorizontal,
@@ -56,7 +56,7 @@ const MOCK_LIBRARY_BOOKS = [
     type: 'ebook',
     purchaseDate: '2024-01-10',
     status: 'reading',
-    downloaded: true,
+   
     totalPages: 320,
     currentPage: 208,
     estimatedTimeLeft: '2h 30min',
@@ -72,7 +72,7 @@ const MOCK_LIBRARY_BOOKS = [
     type: 'audio',
     purchaseDate: '2024-01-12',
     status: 'reading',
-    downloaded: false,
+   
     totalDuration: '8h 45min',
     currentTime: '2h 1min',
     estimatedTimeLeft: '6h 44min',
@@ -88,7 +88,7 @@ const MOCK_LIBRARY_BOOKS = [
     type: 'ebook',
     purchaseDate: '2024-01-08',
     status: 'completed',
-    downloaded: true,
+ 
     totalPages: 280,
     currentPage: 280,
     genre: 'Fantasy'
@@ -103,7 +103,7 @@ const MOCK_LIBRARY_BOOKS = [
     type: 'both',
     purchaseDate: '2024-01-16',
     status: 'unread',
-    downloaded: false,
+   
     totalPages: 450,
     genre: 'Science'
   }
@@ -454,11 +454,7 @@ const ReaderDashboardPage: React.FC = () => {
                             <Headphones className="h-3 w-3" />
                           </div>
                         ) : null}
-                        {book.downloaded && (
-                          <div className="bg-green-500 text-white p-1 rounded">
-                            <Download className="h-3 w-3" />
-                          </div>
-                        )}
+                      
                       </div>
                     </div>
 
@@ -535,17 +531,7 @@ const ReaderDashboardPage: React.FC = () => {
                           </Link>
                         )}
 
-                        <button className="flex items-center px-3 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors text-sm">
-                          <FileText className="h-4 w-4 mr-2" />
-                          Notes
-                        </button>
-
-                        {!book.downloaded && (
-                          <button className="flex items-center px-3 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors text-sm">
-                            <Download className="h-4 w-4 mr-2" />
-                            Télécharger
-                          </button>
-                        )}
+                        
                       </div>
                     </div>
                   </div>

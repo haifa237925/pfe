@@ -1,12 +1,14 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { BookOpen, User, Search, Menu, X, Sun, Moon, Globe } from 'lucide-react';
+import { BookOpen, User, Search, Menu, X, Sun, Moon, Globe, ShoppingCart } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const { user, logout } = useAuth();
+  const { getTotalItems } = useCart();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
@@ -24,6 +26,10 @@ const MainLayout: React.FC = () => {
       default:
         return '/dashboard';
     }
+  };
+
+  const handleLogout = () => {
+    logout();
     // Force redirect to home after logout
     window.location.href = '/';
   };
@@ -100,6 +106,20 @@ const MainLayout: React.FC = () => {
                 )}
               </div>
 
+              {/* Cart Icon */}
+              <Link
+                to="/cart"
+                className="p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors relative"
+                title="Mon panier"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </Link>
+
               <div className="relative">
                 <input 
                   type="text" 
@@ -124,13 +144,24 @@ const MainLayout: React.FC = () => {
                         {t('nav.dashboard')}
                       </Link>
                       {user.role === 'reader' && (
-                        <Link to="/books" className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900 hover:text-primary-600 transition-colors">
-                          {t('nav.books')}
-                        </Link>
+                        <>
+                          <Link to="/books" className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900 hover:text-primary-600 transition-colors">
+                            {t('nav.books')}
+                          </Link>
+                          <Link to="/cart" className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-primary-50 dark:hover:bg-primary-900 hover:text-primary-600 transition-colors flex items-center">
+                            <ShoppingCart className="h-4 w-4 mr-2" />
+                            Panier
+                            {getTotalItems() > 0 && (
+                              <span className="ml-auto bg-primary-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                                {getTotalItems()}
+                              </span>
+                            )}
+                          </Link>
+                        </>
                       )}
                       <div className="border-t border-neutral-100 my-1"></div>
                       <button 
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-red-50 dark:hover:bg-red-900 hover:text-red-600 transition-colors"
                       >
                         {t('nav.logout')}
@@ -190,6 +221,21 @@ const MainLayout: React.FC = () => {
                   {t('nav.books')}
                 </Link>
                 
+                {/* Cart Link for Mobile */}
+                <Link
+                  to="/cart"
+                  className={`${location.pathname === '/cart' ? 'text-primary-600' : 'text-neutral-600 dark:text-neutral-300'} font-medium flex items-center`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Panier
+                  {getTotalItems() > 0 && (
+                    <span className="ml-2 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                      {getTotalItems()}
+                    </span>
+                  )}
+                </Link>
+                
                 <div className="relative">
                   <input 
                     type="text" 
@@ -228,7 +274,7 @@ const MainLayout: React.FC = () => {
                     )}
                     <button 
                       onClick={() => {
-                        logout();
+                        handleLogout();
                         setIsMenuOpen(false);
                       }}
                       className="text-left text-neutral-700 dark:text-neutral-300"
@@ -278,6 +324,7 @@ const MainLayout: React.FC = () => {
               <ul className="space-y-2">
                 <li><Link to="/" className="text-neutral-400 hover:text-white">{t('nav.home')}</Link></li>
                 <li><Link to="/books" className="text-neutral-400 hover:text-white">{t('nav.books')}</Link></li>
+                <li><Link to="/cart" className="text-neutral-400 hover:text-white">Panier</Link></li>
                 <li><Link to="/login" className="text-neutral-400 hover:text-white">{t('nav.login')}</Link></li>
                 <li><Link to="/register" className="text-neutral-400 hover:text-white">{t('nav.signup')}</Link></li>
               </ul>
