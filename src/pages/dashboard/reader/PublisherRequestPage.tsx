@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { 
   BookOpen, 
   User, 
   Mail, 
-  FileText, 
-  Globe, 
-  Phone, 
+  FileText,
   Building, 
   AlertCircle,
   CheckCircle,
@@ -29,7 +28,7 @@ const PublisherRequestPage: React.FC = () => {
     website: '',
     experience: '',
     motivation: '',
-    publishingPlan: '',
+    publicationPlan: '', // Changed from publishingPlan to match backend
     agreesToTerms: false
   });
 
@@ -58,7 +57,7 @@ const PublisherRequestPage: React.FC = () => {
     if (!formData.email.trim()) newErrors.email = 'Email requis';
     if (!formData.phone.trim()) newErrors.phone = 'Numéro de téléphone requis';
     if (!formData.motivation.trim()) newErrors.motivation = 'Motivation requise';
-    if (!formData.publishingPlan.trim()) newErrors.publishingPlan = 'Plan de publication requis';
+    if (!formData.publicationPlan.trim()) newErrors.publicationPlan = 'Plan de publication requis';
     if (!formData.agreesToTerms) newErrors.agreesToTerms = 'Vous devez accepter les conditions';
 
     // Email validation
@@ -81,15 +80,52 @@ const PublisherRequestPage: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulation d'appel API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const backendUrl = import.meta.env.VITE_BACK_END_URL || 'http://localhost:5000';
       
-      // Ici vous ajouterez l'appel API réel
-      console.log('Publisher request submitted:', formData);
-      
-      setIsSubmitted(true);
-    } catch (error) {
+      // Create FormData for the request
+      const requestData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        companyName: formData.companyName,
+        website: formData.website,
+        experience: formData.experience,
+        motivation: formData.motivation,
+        publicationPlan: formData.publicationPlan
+      };
+
+      // Make the API call with credentials
+      const response = await axios.post(
+        `${backendUrl}/api/publisher/submit-request`,
+        requestData,
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.status === 201) {
+        console.log('Publisher request submitted successfully:', response.data);
+        setIsSubmitted(true);
+      }
+    } catch (error: unknown) {
       console.error('Error submitting publisher request:', error);
+      
+      // Handle specific error cases
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          alert('Vous devez être connecté pour soumettre une demande.');
+        } else if (error.response?.status === 400) {
+          alert(error.response.data.message || 'Données invalides. Veuillez vérifier vos informations.');
+        } else {
+          alert('Erreur lors de la soumission. Veuillez réessayer.');
+        }
+      } else {
+        alert('Erreur lors de la soumission. Veuillez réessayer.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -335,18 +371,18 @@ const PublisherRequestPage: React.FC = () => {
                   Quel est votre plan de publication ? *
                 </label>
                 <textarea
-                  name="publishingPlan"
-                  value={formData.publishingPlan}
+                  name="publicationPlan"
+                  value={formData.publicationPlan}
                   onChange={handleInputChange}
                   rows={4}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                    errors.publishingPlan 
+                    errors.publicationPlan 
                       ? 'border-red-300 bg-red-50 dark:bg-red-900/20' 
                       : 'border-neutral-300 dark:border-neutral-600'
                   } bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white`}
                   placeholder="Décrivez les types de livres que vous souhaitez publier, la fréquence, vos stratégies..."
                 />
-                {errors.publishingPlan && <p className="text-red-500 text-sm mt-1">{errors.publishingPlan}</p>}
+                {errors.publicationPlan && <p className="text-red-500 text-sm mt-1">{errors.publicationPlan}</p>}
               </div>
             </div>
           </div>
